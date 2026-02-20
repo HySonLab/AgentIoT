@@ -2,6 +2,8 @@
 This repository implements SEMAS (Self-Enhanced Multi-Agent System), a multi-layer, multi-agent architecture for industrial anomaly detection in manufacturing environments.
 The system is designed following a Fog–Edge–Cloud paradigm, enabling scalable, distributed intelligence for data processing, anomaly detection, and system coordination.
 
+![AgentIOT.png](AgentIOT Framework)
+
 The project is organized into modular components, each responsible for a specific layer or function in the SEMAS architecture.
 ```
 .
