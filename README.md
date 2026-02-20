@@ -105,3 +105,15 @@ WIND_TURBINE DATASET
 Average F1: 0.6575, Precision: 0.4898, Recall: 1.0000
 
 # CITATION
+
+```bibtex
+@misc{saleh2026selfevolvingmultiagentnetworkindustrial,
+      title={Self-Evolving Multi-Agent Network for Industrial IoT Predictive Maintenance}, 
+      author={Rebin Saleh and Khanh Pham Dinh and Balázs Villányi and Truong-Son Hy},
+      year={2026},
+      eprint={2602.16738},
+      archivePrefix={arXiv},
+      primaryClass={cs.MA},
+      url={https://arxiv.org/abs/2602.16738}, 
+}
+```
