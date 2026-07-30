@@ -1,8 +1,28 @@
-config/__pycache__/config.cpython-310.pyc
-messagebroker/__pycache__/broker.cpython-310.pyc
-agents/__pycache__/fog_agents.cpython-310.pyc
-agents/__pycache__/mqtt_agent.cpython-310.pyc
-agents/__pycache__/edge_agents.cpython-310.pyc
-agents/__pycache__/semas_agent.cpython-310.pyc
-agents/__pycache__/cloud_agents.cpython-310.pyc
-data_processing/__pycache__/processing.cpython-310.pyc
+# Datasets are NOT redistributed in this repository.
+# See README "Getting the data" and scripts/get_data.py.
+dataset/*
+!dataset/.gitkeep
+!dataset/README.md
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# Local run artifacts (results/*.json ARE tracked on purpose: they back the
+# numbers reported in the manuscript. Logs and scratch output are not.)
+*.log
+*.pkl
+output/
+figures/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

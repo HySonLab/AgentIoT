@@ -1,0 +1,39 @@
+{
+  "edge": {
+    "rss_delta_mb": 0.0,
+    "model_size_mb": 0.000392,
+    "per_sample_ms": 0.0006056654020460471,
+    "cpu_percent_of_one_core": 96.9
+  },
+  "fog_node": {
+    "rss_delta_mb": 11.95212799999996,
+    "model_size_mb": 10.102416,
+    "per_sample_ms": 1.2413804182598038,
+    "cpu_percent_of_one_core": 96.8
+  },
+  "cloud_ppo": {
+    "rss_delta_mb": 79.41324800000001,
+    "policy_size_mb": 0.137762,
+    "update_64steps_s": 96.56791489999159,
+    "cpu_percent_of_one_core": 99.1
+  },
+  "cloud_shap": {
+    "rss_delta_mb": 4.788224000000014,
+    "per_alert_ms": 120.09519999992335,
+    "cpu_percent_of_one_core": 100.6
+  },
+  "slm": {
+    "resident_mb_ollama": 1519.292251,
+    "response_latency_s": 82.24201119999634,
+    "model": "llama3.2:1b",
+    "cpu_percent_ollama_process": 5.6,
+    "gpu_percent": null
+  },
+  "host": {
+    "cpu_count": 8,
+    "total_ram_gb": 17.006317568,
+    "process_rss_total_mb": 541.40928,
+    "gpu_present": false,
+    "note": "All measurements on CPU-only hardware; GPU utilization is N/A (0%) throughout this study, including for the SLM. CPU utilization sampled in a separate follow-up pass (see measure_resources.py); wall-clock timing/memory figures are the original measurement reported in the manuscript."
+  }
+}

@@ -1,16 +1,25 @@
-langchain_openai
-langchain
-langchain-community
-vinagent==0.0.6
-numpy
-pandas
-scikit-learn
-tensorflow
-langgraph
-scipy
-matplotlib
-seaborn
-opendatasets
-spektral
-paho-mqtt
-shap
+# Exact versions used to produce every number in the manuscript.
+# Verified on Python 3.13.5 (Windows, CPU-only). Python 3.10+ is required
+# (the code uses PEP 604 "X | None" annotations).
+#
+# torch is pinned to the base version; on a CPU-only machine install with:
+#   pip install torch==2.12.1 --index-url https://download.pytorch.org/whl/cpu
+#
+# If a pin is unavailable for your platform, relax that single line rather
+# than the whole file, and re-run scripts/verify_install.py, which reports
+# any version drift from the set below.
+
+numpy==2.1.3
+pandas==2.3.3
+scikit-learn==1.8.0
+scipy==1.17.0
+torch==2.12.1
+stable-baselines3==2.9.0
+gymnasium==1.3.0
+shap==0.52.0
+psutil==5.9.0
+matplotlib==3.11.1
+
+# Optional: only needed if you swap the in-process broker for a real MQTT
+# broker; no script in this repository requires it.
+paho-mqtt==2.1.0

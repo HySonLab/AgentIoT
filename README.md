@@ -1,121 +1,152 @@
-# INTRODUCTION
-This repository implements SEMAS (Self-Enhanced Multi-Agent System), a multi-layer, multi-agent architecture for industrial anomaly detection in manufacturing environments.
-The system is designed following a Fog–Edge–Cloud paradigm, enabling scalable, distributed intelligence for data processing, anomaly detection, and system coordination.
+# SEMAS — Self-Adaptive Edge-Fog-Cloud Multi-Agent System for IIoT Predictive Maintenance
 
-![SEMAS Framework](AgentIOT.png)
+Reference implementation for *"SEMAS: A Hierarchical Multi-Agent Architecture with
+Online Policy Adaptation for Industrial IoT Predictive Maintenance"*
+(IEEE Access, manuscript **Access-2026-28815**, under review).
 
-The project is organized into modular components, each responsible for a specific layer or function in the SEMAS architecture.
-```
-.
-├── agents # Organize specific agents according to three layers fog, edge, and cloud
-│   ├── cloud_agents.py
-│   ├── edge_agents.py
-│   ├── fog_agents.py
-│   ├── mqtt_agent.py
-│   └── semas_agent.py
-├── config # Config message broker for agents
-│   └── config.py
-├── data_processing # Data processing pipeline
-│   └── processing.py
-├── dataset # Data input storage.
-│   ├── Boiler_emulator_dataset.csv
-│   └── ieee-phm-2012-data-challenge-dataset
-├── messagebroker # Message broker for transfer message.
-│   └── broker.py
-├── pipeline.py # Initialize full pipeline
-├── README.md
-├── requirements.txt
+Every number in the manuscript is produced by the scripts here and written to
+`results/` as machine-readable artifacts. Nothing in the paper's results
+section is hand-entered.
+
+---
+
+## Quick start for reviewers
+
+**You do not need any dataset to check that this code works.** One command
+runs the entire SEMAS pipeline end to end on synthetic data — Edge filter,
+K=3 Fog nodes, 5-model ensemble, consensus, validation-only threshold
+calibration, real PPO adaptation, real SHAP attribution, federated-style
+aggregation, and both baselines:
+
+```bash
+pip install -r requirements.txt
+python scripts/verify_install.py --skip-slm
 ```
 
-Folder Description:
-- agents/
-Contains the implementation of all agents in the SEMAS architecture, organized by deployment layer:
+Expected: a checklist ending in `RESULT: PASS`. Takes **3–4 minutes** on a
+laptop CPU (most of it the PPO step). Drop `--skip-slm` to also exercise the
+locally hosted language model, which adds ~1 minute and needs Ollama.
 
-    - Fog agents handle intermediate aggregation and contextual reasoning.
-    - Edge agents perform real-time anomaly detection close to data sources.
-    - Cloud agents manage global coordination, system optimization, and long-term knowledge enhancement.
+This proves the code *runs*. Reproducing the paper's *numbers* needs the
+datasets — see below.
 
-- config/
-Stores configuration files for the message broker and system-level parameters used by agents.
+---
 
-- data_processing/
-Implements the data processing pipeline, including preprocessing, feature extraction, and preparation for anomaly detection models.
+## Reproduction tiers
 
-- dataset/
-Holds raw input datasets used for experimental evaluation, including boiler fault data and industrial challenge datasets.
+| Tier | Needs | Time | Reproduces |
+|---|---|---|---|
+| **0** | nothing | 3–4 min | Pipeline runs end to end (`verify_install.py`) |
+| **1** | C-MAPSS (auto-download) | ~20 min | RUL benchmark: MAE 11.20 / RMSE 15.95 |
+| **2** | all three datasets | several hours | Every table in the paper |
 
-- messagebroker/
-Provides the messaging infrastructure that enables communication between distributed agents using a broker-based architecture.
+### Tier 1 — the externally comparable result
 
-# INSTALLATION
+C-MAPSS is public and downloads automatically. This is the paper's only
+result directly comparable to published literature, so it is the most
+useful single check:
 
-Setup environment
-
-```
-uv venv
-source .venv/bin/activate
-uv pip install -r requirements.txt
+```bash
+python scripts/get_data.py        # downloads NASA C-MAPSS (~12 MB)
+python scripts/run_phase3.py      # RUL + supervised deep baselines
 ```
 
-# TRAINING
+Expect `MAE=11.20, RMSE=15.95` cycles (last-cycle protocol), against
+RMSE 16.14 for the comparable published LSTM we cite.
 
-To run the full pipeline, execute the main script:
-```
-python pipeline.py
-```
-It will do following steps:
-- Load and preprocess data of boiler and wind turbin from dataset folder
-- Run training and evaluation anormaly detection based on Multi-Agent System
+### Tier 2 — everything
 
-# DATASET
-There are two datasets used in this project:
-1. Boiler Dataset: a simulated industrial dataset that models the operation of a steam boiler system under both normal and faulty conditions.
-- Source: https://ieee-dataport.org/open-access/simulated-boiler-fault-data
-
-2. Turbin Dataset: this dataset contains SCADA (Supervisory Control and Data Acquisition) data collected from a real wind turbine.
-- Source: https://www.kaggle.com/datasets/berkerisen/wind-turbine-scada-dataset
-
-You can download and organize into folder `dataset`:
-
-```
-dataset
-├── Boiler_emulator_dataset.csv
-└── ieee-phm-2012-data-challenge-dataset-master
-    ├── Full_Test_Set
-    ├── Learning_set
-    └── Test_set
+```bash
+python scripts/run_experiments.py --seeds 5   # main sweep (resumable)
+python scripts/run_ablation.py
+python scripts/run_k_ablation.py              # volume-controlled K ablation
+python scripts/run_robustness.py              # noise / missing / prevalence
+python scripts/run_ae_and_sensitivity.py
+python scripts/measure_resources.py           # measured per-tier memory + CPU
+python scripts/analyze_stats.py               # THE statistics table
 ```
 
-# RESULT
+`run_experiments.py` is resumable: it appends one JSON line per completed run
+to `results/experiments.jsonl` and skips runs already present, so you can
+interrupt and restart it.
 
-BOILER DATASET
-| Iteration | Accuracy | Precision | Recall | F1-score | ROC-AUC | Eval Time (s) | Predict Time (s) | RUL MAE | RUL RMSE |
-| --------: | -------: | --------: | -----: | -------: | ------: | ------------: | ---------------: | ------: | -------: |
-|         1 |   0.5306 |    0.3929 | 0.8352 |   0.5344 |  0.6695 |        0.0139 |           0.6512 | 35.2992 |  42.5011 |
-|         2 |   0.5154 |    0.3866 | 0.8557 |   0.5325 |  0.6695 |        0.0079 |           0.3224 | 35.2992 |  42.5011 |
-|         3 |   0.4980 |    0.3786 | 0.8676 |   0.5272 |  0.6695 |        0.0080 |           0.4006 | 35.2992 |  42.5011 |
+---
 
-Average F1: 0.5314, Precision: 0.3860, Recall: 0.8528
+## Getting the data
 
-WIND_TURBINE DATASET
-| Iteration | Accuracy | Precision | Recall | F1-score | ROC-AUC | Eval Time (s) | Predict Time (s) | RUL MAE | RUL RMSE |
-| --------: | -------: | --------: | -----: | -------: | ------: | ------------: | ---------------: | ------: | -------: |
-|         1 |   0.5000 |    0.4898 | 1.0000 |   0.6575 |  0.5176 |        0.0017 |           0.3469 | 22.4011 |  28.3170 |
-|         2 |   0.5000 |    0.4898 | 1.0000 |   0.6575 |  0.5180 |        0.0018 |           0.0385 | 22.4011 |  28.3170 |
-|         3 |   0.5000 |    0.4898 | 1.0000 |   0.6575 |  0.5184 |        0.0018 |           0.0374 | 22.4011 |  28.3170 |
+Run `python scripts/get_data.py --check` at any time for status.
 
-Average F1: 0.6575, Precision: 0.4898, Recall: 1.0000
+| Dataset | How to obtain | Redistributed here? |
+|---|---|---|
+| **NASA C-MAPSS** | `python scripts/get_data.py` (automatic) | No — downloaded from NASA |
+| **Wind Turbine SCADA** | Kaggle; URL printed by `get_data.py` | No — third-party terms |
+| **Boiler Emulator** | Request from the corresponding author | No |
 
-# CITATION
+We deliberately do not redistribute datasets we do not own. Every loader
+fails with an explicit message telling you where the file should go and how
+to get it, rather than a bare `FileNotFoundError`.
 
-```bibtex
-@misc{saleh2026selfevolvingmultiagentnetworkindustrial,
-      title={Self-Evolving Multi-Agent Network for Industrial IoT Predictive Maintenance}, 
-      author={Rebin Saleh and Khanh Pham Dinh and Balázs Villányi and Truong-Son Hy},
-      year={2026},
-      eprint={2602.16738},
-      archivePrefix={arXiv},
-      primaryClass={cs.MA},
-      url={https://arxiv.org/abs/2602.16738}, 
-}
+---
+
+## What this system is
+
+- **Edge** (`semas/agents/edge.py`) — O(d) z-score pre-filter; cutoff tuned on
+  validation data under an anomaly-pass-rate constraint.
+- **Fog**, K=3 nodes on disjoint training partitions
+  (`semas/agents/fog_node.py`, `detectors.py`) — Agent B1 (Isolation Forest),
+  Agent B2 (5-model ensemble: IF, OC-SVM, LOF, Elliptic Envelope, second IF;
+  soft voting), Agent B3 (weighted consensus). Agent C (`response.py`)
+  generates operator-facing text with a locally hosted SLM (Llama-3.2-1B via
+  Ollama), grounded in SHAP attributions.
+- **Cloud** (`semas/agents/evolution.py`) — Agent D, real PPO via
+  stable-baselines3 over `(w1, ρ, τ)` with the manuscript's reward;
+  `meta.py` — Agent E, real SHAP TreeExplainer attributions;
+  `semas/aggregation.py` — data-proportional federated-style aggregation
+  across the K fog nodes.
+
+## Evaluation invariants (enforced in code, not just claimed)
+
+1. Thresholds are calibrated on the **validation split only** — never on test
+   labels (`semas/evaluation.py`).
+2. Latency is measured end-to-end, feature vector in → decision out, with the
+   boundary stated (`measure_latency`) — never from a sub-timer.
+3. Every seed flows through `semas/seeding.py`, so "N seeds" means N genuinely
+   different runs.
+4. All statistics come from `scripts/analyze_stats.py`, computed directly from
+   per-seed logs.
+5. RUL is evaluated only on C-MAPSS, which has real run-to-failure labels.
+   No synthetic RUL targets anywhere.
+
+## Headline findings — reported as-is, including the null result
+
+- PPO-based adaptation is **statistically indistinguishable** from both a
+  static and a rule-based adaptive baseline on detection F1 (all pairwise
+  Welch's t-tests p > 0.5, 5 seeds, every condition). We report this directly.
+- All systems meet the 100 ms real-time budget (0.27–3.27 ms measured, CPU).
+  SEMAS is **not** uniformly faster than the simpler baselines.
+- The volume-controlled K-ablation shows **no** accuracy effect from the
+  multi-node Fog tier; its value is architectural, not accuracy.
+- C-MAPSS FD001 RUL: MAE 11.20 / RMSE 15.95 cycles, comparable to published
+  results.
+- A supervised MLP beats every unsupervised system on labelled Boiler data
+  (F1 0.906). SEMAS's scope is label-scarce, explainability-first deployment,
+  and the paper says so.
+
+## Environment
+
+Python **3.10+** required (PEP 604 annotations); developed and measured on
+3.13.5. `requirements.txt` pins exact versions;
+`scripts/verify_install.py` reports any drift from them.
+
+All measured figures in the paper come from: 8 logical CPU cores, 17 GB RAM,
+**no GPU**, Windows 11; SLM served by Ollama 0.32 (llama3.2:1b, 1.52 GB
+resident, 35–82 s per response on CPU).
+
+## Layout
+
+```
+semas/            # the system (agents, data loaders, evaluation, experiment protocol)
+scripts/          # everything runnable; each writes to results/
+results/          # machine-readable artifacts backing every number in the paper
+SEMAS_rebuilt.ipynb   # narrative walkthrough with outputs already executed
 ```
