@@ -1,4 +1,4 @@
-"""SEMAS: Self-Evolving Multi-Agent System for IIoT predictive maintenance.
+"""HAMA: Self-Evolving Multi-Agent System for IIoT predictive maintenance.
 
 Rebuilt implementation (Path B revision). Every number reported in the
 manuscript must be reproducible from this package.

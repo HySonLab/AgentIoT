@@ -16,7 +16,7 @@ Method:
                   stable instantaneous reading). Reported as % of one
                   logical core (100% = one core fully saturated); this
                   process never observed >100% across any component,
-                  i.e. none of SEMAS's inference paths are multi-threaded
+                  i.e. none of HAMA's inference paths are multi-threaded
                   in this implementation.
   * GPU utilization: N/A by construction - all experiments in this paper,
                   including the SLM, run on CPU-only hardware (no GPU
@@ -40,8 +40,8 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 import numpy as np
 import psutil
 
-from semas.data import load_boiler
-from semas.seeding import set_seeds
+from hama.data import load_boiler
+from hama.seeding import set_seeds
 
 PROC = psutil.Process()
 
@@ -73,7 +73,7 @@ X = ds.X_train.values
 report = {}
 
 # ---- Edge tier ----------------------------------------------------------
-from semas.agents.edge import EdgeFilter
+from hama.agents.edge import EdgeFilter
 r0 = rss_mb()
 edge = EdgeFilter().fit(X)
 t0 = time.perf_counter()
@@ -89,7 +89,7 @@ report["edge"] = {
 }
 
 # ---- Fog tier -----------------------------------------------------------
-from semas.agents.fog_node import FogNode
+from hama.agents.fog_node import FogNode
 r0 = rss_mb()
 node = FogNode(node_id=0, seed=42).fit(X)
 t0 = time.perf_counter()
@@ -105,11 +105,11 @@ report["fog_node"] = {
 }
 
 # ---- Cloud tier ---------------------------------------------------------
-from semas.system import SemasSystem
-from semas.agents.evolution import PolicyEvolutionEnv
+from hama.system import HamaSystem
+from hama.agents.evolution import PolicyEvolutionEnv
 from stable_baselines3 import PPO
 
-sys_ = SemasSystem(k_nodes=3, seed=42).fit(X)
+sys_ = HamaSystem(k_nodes=3, seed=42).fit(X)
 env = PolicyEvolutionEnv(sys_, ds.X_val.values, ds.y_val, window=256, seed=42)
 r0 = rss_mb()
 ppo = PPO("MlpPolicy", env, n_steps=64, batch_size=64, seed=42, verbose=0)
@@ -125,7 +125,7 @@ report["cloud_ppo"] = {
     "cpu_percent_of_one_core": ppo_cpu_pct,
 }
 
-from semas.agents.meta import AgentE
+from hama.agents.meta import AgentE
 r0 = rss_mb()
 agent_e = AgentE(sys_.nodes[0], ds.feature_names, X)
 t0 = time.perf_counter()
@@ -141,7 +141,7 @@ report["cloud_shap"] = {
 # ---- SLM (fog, event-driven) --------------------------------------------
 # The SLM runs inside the separate Ollama server process, not this Python
 # process, so CPU% must be sampled on the Ollama process itself.
-from semas.agents.response import AgentC, model_memory_mb
+from hama.agents.response import AgentC, model_memory_mb
 
 ollama_procs = [p for p in psutil.process_iter(["name"])
                 if p.info["name"] and "ollama" in p.info["name"].lower()]

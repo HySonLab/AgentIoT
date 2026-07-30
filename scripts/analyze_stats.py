@@ -3,7 +3,7 @@
 Reads results/experiments.jsonl and produces, from actual computed values:
   * per system x dataset: mean +/- std and 95% CI of F1/precision/recall/AUC
     across independent seed runs;
-  * Welch t-tests (SEMAS vs each baseline) on seed-level F1, with Cohen's d;
+  * Welch t-tests (HAMA vs each baseline) on seed-level F1, with Cohen's d;
   * drift-mode per-segment F1 trajectories.
 
 Every statistical number in the manuscript must come from this script's
@@ -49,12 +49,12 @@ summary = (
 )
 lines.append(summary.to_markdown() + "\n")
 
-lines.append("## Welch t-tests on seed-level F1 (SEMAS vs baselines)\n")
+lines.append("## Welch t-tests on seed-level F1 (HAMA vs baselines)\n")
 lines.append("| Dataset | Comparison | ΔF1 | t | p | Cohen's d | Significant (α=0.05) |")
 lines.append("|---|---|---|---|---|---|---|")
 for dataset in sorted(df["dataset"].unique()):
     d = df[df["dataset"] == dataset]
-    a = d[d["system"] == "semas"]["f1"].to_numpy()
+    a = d[d["system"] == "hama"]["f1"].to_numpy()
     for base in ["baseline1", "baseline2"]:
         b = d[d["system"] == base]["f1"].to_numpy()
         if len(a) < 2 or len(b) < 2:
@@ -63,7 +63,7 @@ for dataset in sorted(df["dataset"].unique()):
         pooled_sd = np.sqrt((a.var(ddof=1) + b.var(ddof=1)) / 2)
         cohen_d = (a.mean() - b.mean()) / pooled_sd if pooled_sd > 0 else float("nan")
         lines.append(
-            f"| {dataset} | SEMAS vs {base} | {a.mean()-b.mean():+.4f} "
+            f"| {dataset} | HAMA vs {base} | {a.mean()-b.mean():+.4f} "
             f"| {t:.2f} | {p:.4f} | {cohen_d:.2f} "
             f"| {'yes' if p < 0.05 else 'no'} |"
         )

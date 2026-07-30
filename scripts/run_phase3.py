@@ -15,13 +15,13 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 import numpy as np
 
-from semas.baselines.deep import (
+from hama.baselines.deep import (
     MLPClassifier, SequenceClassifier, make_windows, predict_scores, train_classifier,
 )
-from semas.baselines.rul import predict_rul, train_rul
-from semas.data import load_boiler, load_cmapss, load_wind
-from semas.evaluation import calibrate_threshold, classification_metrics, rul_metrics
-from semas.seeding import set_seeds
+from hama.baselines.rul import predict_rul, train_rul
+from hama.data import load_boiler, load_cmapss, load_wind
+from hama.evaluation import calibrate_threshold, classification_metrics, rul_metrics
+from hama.seeding import set_seeds
 
 SEED = 42
 set_seeds(SEED)

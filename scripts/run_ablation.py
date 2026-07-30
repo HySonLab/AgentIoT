@@ -1,5 +1,5 @@
 """Real component ablation on the Boiler dataset (R3's audit requirement):
-each row removes exactly one component from the Full SEMAS configuration.
+each row removes exactly one component from the Full HAMA configuration.
 All numbers computed here, none hand-entered into the manuscript.
 
 Rows:
@@ -23,12 +23,12 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 import numpy as np
 
-from semas.agents.evolution import evolve_policy
-from semas.agents.fog_node import FogPolicy
-from semas.data import load_boiler
-from semas.evaluation import calibrate_threshold, classification_metrics
-from semas.seeding import set_seeds
-from semas.system import SemasSystem
+from hama.agents.evolution import evolve_policy
+from hama.agents.fog_node import FogPolicy
+from hama.data import load_boiler
+from hama.evaluation import calibrate_threshold, classification_metrics
+from hama.seeding import set_seeds
+from hama.system import HamaSystem
 
 SEEDS = [42, 123, 456]
 PPO_TIMESTEPS = 256
@@ -40,7 +40,7 @@ def run_variant(variant: str, seed: int, ds) -> dict:
     Xte, yte = ds.X_test.values, ds.y_test
 
     k = 1 if variant == "no_federated" else 3
-    sys_ = SemasSystem(k_nodes=k, seed=seed).fit(Xtr)
+    sys_ = HamaSystem(k_nodes=k, seed=seed).fit(Xtr)
     sys_.edge.tune(Xva, yva)
 
     if variant == "no_consensus":

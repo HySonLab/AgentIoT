@@ -17,8 +17,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-from semas.data import load_boiler, load_wind
-from semas.experiment import run_system
+from hama.data import load_boiler, load_wind
+from hama.experiment import run_system
 
 SEEDS_BASE = [42, 123, 456, 789, 1024, 2048, 3141, 4096, 5150, 6174]
 
@@ -38,7 +38,7 @@ def main():
     ap.add_argument("--seeds", type=int, default=5)
     ap.add_argument("--ppo-timesteps", type=int, default=512)
     ap.add_argument("--systems", nargs="+",
-                    default=["baseline1", "baseline2", "semas"])
+                    default=["baseline1", "baseline2", "hama"])
     ap.add_argument("--datasets", nargs="+",
                     default=["boiler_static", "boiler_drift", "wind_static"])
     args = ap.parse_args()

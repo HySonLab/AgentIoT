@@ -3,7 +3,7 @@
 
 Purpose: let anyone - in particular a reviewer who does not yet have the
 datasets - confirm in one command that this repository actually installs,
-imports, and RUNS the full SEMAS pipeline end to end. It builds a small
+imports, and RUNS the full HAMA pipeline end to end. It builds a small
 synthetic dataset in memory, then exercises every architectural component
 the manuscript claims: the Edge pre-filter, K=3 Fog nodes with the
 5-model ensemble, weighted consensus, validation-only threshold
@@ -54,7 +54,7 @@ def report(status, label, detail=""):
 
 # ----------------------------------------------------------------- 1. Python
 print("=" * 68)
-print("SEMAS installation self-test")
+print("HAMA installation self-test")
 print("=" * 68)
 print("\n1. Interpreter")
 v = sys.version_info
@@ -85,11 +85,11 @@ for mod, expected in EXPECTED.items():
         failures.append(f"import-{mod}")
 
 # ------------------------------------------------------------ 3. Package imports
-print("\n3. SEMAS package")
-for name in ["semas.seeding", "semas.evaluation", "semas.system",
-             "semas.aggregation", "semas.agents.edge", "semas.agents.detectors",
-             "semas.agents.fog_node", "semas.agents.evolution",
-             "semas.agents.meta", "semas.baselines.systems", "semas.data"]:
+print("\n3. HAMA package")
+for name in ["hama.seeding", "hama.evaluation", "hama.system",
+             "hama.aggregation", "hama.agents.edge", "hama.agents.detectors",
+             "hama.agents.fog_node", "hama.agents.evolution",
+             "hama.agents.meta", "hama.baselines.systems", "hama.data"]:
     try:
         importlib.import_module(name)
         report(PASS, name)
@@ -127,10 +127,10 @@ try:
     import numpy as np
     import pandas as pd
 
-    from semas.seeding import set_seeds
-    from semas.system import SemasSystem
-    from semas.agents.fog_node import FogPolicy
-    from semas.evaluation import calibrate_threshold, classification_metrics, measure_latency
+    from hama.seeding import set_seeds
+    from hama.system import HamaSystem
+    from hama.agents.fog_node import FogPolicy
+    from hama.evaluation import calibrate_threshold, classification_metrics, measure_latency
 
     set_seeds(42)
     rng = np.random.default_rng(42)
@@ -151,7 +151,7 @@ try:
     Xte, yte = make(200, 0.30)
     report(PASS, "synthetic data", f"train={len(ytr)} val={len(yva)} test={len(yte)}")
 
-    sysm = SemasSystem(k_nodes=3, seed=42).fit(Xtr.values)
+    sysm = HamaSystem(k_nodes=3, seed=42).fit(Xtr.values)
     report(PASS, "Fog tier fitted", f"K={len(sysm.nodes)} nodes, B1+B2 5-model ensemble")
 
     z = sysm.edge.tune(Xva.values, yva)
@@ -171,7 +171,7 @@ try:
     report(PASS, "federated-style aggregation",
            f"theta_global=(w1={agg.w1:.3f}, rho={agg.contamination:.3f}, tau={agg.tau:.3f})")
 
-    from semas.agents.evolution import evolve_policy
+    from hama.agents.evolution import evolve_policy
     _, best = evolve_policy(sysm, Xva.values, yva, total_timesteps=32,
                             seed=42, window=64)
     report(PASS, "PPO policy adaptation (stable-baselines3)",
@@ -186,7 +186,7 @@ try:
     report(PASS, "end-to-end latency",
            f"{lat.per_sample_ms:.3f} ms/sample ({budget} 100 ms budget)")
 
-    from semas.agents.meta import AgentE
+    from hama.agents.meta import AgentE
     scores_te = sysm.scores(Xte.values)
     alerts = np.flatnonzero(scores_te >= best.tau)
     if len(alerts):
@@ -197,13 +197,13 @@ try:
     else:
         report(WARN, "SHAP attribution", "no alerts fired on synthetic data")
 
-    from semas.baselines.systems import Baseline1Static, Baseline2RuleBased
+    from hama.baselines.systems import Baseline1Static, Baseline2RuleBased
     b1 = Baseline1Static(seed=42).fit(Xtr.values, Xva.values, yva)
     b2 = Baseline2RuleBased(seed=42).fit(Xtr.values, Xva.values, yva)
     mb1 = classification_metrics(yte, b1.scores(Xte.values), b1.tau)
     mb2 = classification_metrics(yte, b2.scores(Xte.values), b2.tau)
     report(PASS, "baselines run",
-           f"BL1 F1={mb1['f1']:.3f}, BL2 F1={mb2['f1']:.3f}, SEMAS F1={m1['f1']:.3f}")
+           f"BL1 F1={mb1['f1']:.3f}, BL2 F1={mb2['f1']:.3f}, HAMA F1={m1['f1']:.3f}")
 
 except Exception:
     report(FAIL, "pipeline", "exception (traceback below)")
@@ -217,7 +217,7 @@ print("\n6. Optional: locally hosted SLM (Agent C)")
 try:
     if "--skip-slm" in sys.argv:
         raise RuntimeError("skipped by flag")
-    from semas.agents.response import AgentC, model_memory_mb
+    from hama.agents.response import AgentC, model_memory_mb
     rec = AgentC().generate(0.9, ["sensor_0", "sensor_3"], "synthetic test asset")
     mem = model_memory_mb()  # query AFTER generation, while model is resident
     mem_s = f"{mem:.0f} MB resident" if mem else "resident size unavailable"
@@ -234,7 +234,7 @@ print("\n" + "=" * 68)
 if failures:
     print(f"RESULT: FAILED ({len(failures)} problem(s)): {', '.join(failures)}")
     sys.exit(1)
-print(f"RESULT: PASS - full SEMAS pipeline ran end to end in {elapsed:.0f}s.")
+print(f"RESULT: PASS - full HAMA pipeline ran end to end in {elapsed:.0f}s.")
 if warnings_:
     print(f"        {len(warnings_)} non-blocking warning(s): {', '.join(warnings_)}")
 print("\nThis verified that the code RUNS. To reproduce the paper's NUMBERS,")

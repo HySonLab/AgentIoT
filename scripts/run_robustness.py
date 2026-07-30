@@ -3,7 +3,7 @@ imbalance. (Operational drift is covered by the boiler severity-drift
 protocol in run_experiments.py.)
 
 Corruptions are applied to the TEST set only (deployment-time degradation);
-systems are trained and calibrated on clean data. SEMAS (static mode, no
+systems are trained and calibrated on clean data. HAMA (static mode, no
 extra adaptation) vs Baseline1, 3 seeds.
 """
 
@@ -16,12 +16,12 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 import numpy as np
 
-from semas.baselines.systems import Baseline1Static
-from semas.data import load_boiler
-from semas.evaluation import calibrate_threshold, classification_metrics
-from semas.agents.fog_node import FogPolicy
-from semas.seeding import set_seeds
-from semas.system import SemasSystem
+from hama.baselines.systems import Baseline1Static
+from hama.data import load_boiler
+from hama.evaluation import calibrate_threshold, classification_metrics
+from hama.agents.fog_node import FogPolicy
+from hama.seeding import set_seeds
+from hama.system import HamaSystem
 
 SEEDS = [42, 123, 456, 789, 1024]
 
@@ -60,12 +60,12 @@ for seed in SEEDS:
     Xte, yte = ds.X_test.values, ds.y_test
 
     systems = {}
-    sem = SemasSystem(k_nodes=3, seed=seed).fit(Xtr)
+    sem = HamaSystem(k_nodes=3, seed=seed).fit(Xtr)
     sem.edge.tune(Xva, yva)
     tau_s = calibrate_threshold(yva, sem.scores(Xva))
     p = sem.global_policy()
     sem.set_global_policy(FogPolicy(p.w1, p.contamination, tau_s))
-    systems["semas"] = (sem.scores, tau_s)
+    systems["hama"] = (sem.scores, tau_s)
     b1 = Baseline1Static(seed=seed).fit(Xtr, Xva, yva)
     systems["baseline1"] = (b1.scores, b1.tau)
 

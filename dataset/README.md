@@ -30,5 +30,5 @@ dataset/
 | **Boiler Emulator** | Request from the corresponding author | Not redistributed here. |
 
 **No dataset is required** to verify that the code works — run
-`python scripts/verify_install.py`, which exercises the full SEMAS pipeline
+`python scripts/verify_install.py`, which exercises the full HAMA pipeline
 on synthetic data.

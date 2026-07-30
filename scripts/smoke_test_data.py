@@ -10,9 +10,9 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 import numpy as np
 from sklearn.ensemble import IsolationForest
 
-from semas.data import load_boiler, load_cmapss, load_wind
-from semas.evaluation import calibrate_threshold, classification_metrics
-from semas.seeding import set_seeds
+from hama.data import load_boiler, load_cmapss, load_wind
+from hama.evaluation import calibrate_threshold, classification_metrics
+from hama.seeding import set_seeds
 
 set_seeds(42)
 

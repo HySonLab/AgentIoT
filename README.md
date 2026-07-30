@@ -1,7 +1,7 @@
-# SEMAS — Self-Adaptive Edge-Fog-Cloud Multi-Agent System for IIoT Predictive Maintenance
+# HAMA — Hierarchical Adaptive Multi-Agent Architecture for IIoT Predictive Maintenance
 
-Reference implementation for *"SEMAS: A Hierarchical Multi-Agent Architecture with
-Online Policy Adaptation for Industrial IoT Predictive Maintenance"*
+Reference implementation for *"HAMA: A Hierarchical Adaptive Multi-Agent Architecture for Industrial
+IoT Predictive Maintenance"*
 (IEEE Access, manuscript **Access-2026-28815**, under review).
 
 Every number in the manuscript is produced by the scripts here and written to
@@ -13,7 +13,7 @@ section is hand-entered.
 ## Quick start for reviewers
 
 **You do not need any dataset to check that this code works.** One command
-runs the entire SEMAS pipeline end to end on synthetic data — Edge filter,
+runs the entire HAMA pipeline end to end on synthetic data — Edge filter,
 K=3 Fog nodes, 5-model ensemble, consensus, validation-only threshold
 calibration, real PPO adaptation, real SHAP attribution, federated-style
 aggregation, and both baselines:
@@ -90,27 +90,27 @@ to get it, rather than a bare `FileNotFoundError`.
 
 ## What this system is
 
-- **Edge** (`semas/agents/edge.py`) — O(d) z-score pre-filter; cutoff tuned on
+- **Edge** (`hama/agents/edge.py`) — O(d) z-score pre-filter; cutoff tuned on
   validation data under an anomaly-pass-rate constraint.
 - **Fog**, K=3 nodes on disjoint training partitions
-  (`semas/agents/fog_node.py`, `detectors.py`) — Agent B1 (Isolation Forest),
+  (`hama/agents/fog_node.py`, `detectors.py`) — Agent B1 (Isolation Forest),
   Agent B2 (5-model ensemble: IF, OC-SVM, LOF, Elliptic Envelope, second IF;
   soft voting), Agent B3 (weighted consensus). Agent C (`response.py`)
   generates operator-facing text with a locally hosted SLM (Llama-3.2-1B via
   Ollama), grounded in SHAP attributions.
-- **Cloud** (`semas/agents/evolution.py`) — Agent D, real PPO via
+- **Cloud** (`hama/agents/evolution.py`) — Agent D, real PPO via
   stable-baselines3 over `(w1, ρ, τ)` with the manuscript's reward;
   `meta.py` — Agent E, real SHAP TreeExplainer attributions;
-  `semas/aggregation.py` — data-proportional federated-style aggregation
+  `hama/aggregation.py` — data-proportional federated-style aggregation
   across the K fog nodes.
 
 ## Evaluation invariants (enforced in code, not just claimed)
 
 1. Thresholds are calibrated on the **validation split only** — never on test
-   labels (`semas/evaluation.py`).
+   labels (`hama/evaluation.py`).
 2. Latency is measured end-to-end, feature vector in → decision out, with the
    boundary stated (`measure_latency`) — never from a sub-timer.
-3. Every seed flows through `semas/seeding.py`, so "N seeds" means N genuinely
+3. Every seed flows through `hama/seeding.py`, so "N seeds" means N genuinely
    different runs.
 4. All statistics come from `scripts/analyze_stats.py`, computed directly from
    per-seed logs.
@@ -123,13 +123,13 @@ to get it, rather than a bare `FileNotFoundError`.
   static and a rule-based adaptive baseline on detection F1 (all pairwise
   Welch's t-tests p > 0.5, 5 seeds, every condition). We report this directly.
 - All systems meet the 100 ms real-time budget (0.27–3.27 ms measured, CPU).
-  SEMAS is **not** uniformly faster than the simpler baselines.
+  HAMA is **not** uniformly faster than the simpler baselines.
 - The volume-controlled K-ablation shows **no** accuracy effect from the
   multi-node Fog tier; its value is architectural, not accuracy.
 - C-MAPSS FD001 RUL: MAE 11.20 / RMSE 15.95 cycles, comparable to published
   results.
 - A supervised MLP beats every unsupervised system on labelled Boiler data
-  (F1 0.906). SEMAS's scope is label-scarce, explainability-first deployment,
+  (F1 0.906). HAMA's scope is label-scarce, explainability-first deployment,
   and the paper says so.
 
 ## Environment
@@ -145,8 +145,8 @@ resident, 35–82 s per response on CPU).
 ## Layout
 
 ```
-semas/            # the system (agents, data loaders, evaluation, experiment protocol)
+hama/            # the system (agents, data loaders, evaluation, experiment protocol)
 scripts/          # everything runnable; each writes to results/
 results/          # machine-readable artifacts backing every number in the paper
-SEMAS_rebuilt.ipynb   # narrative walkthrough with outputs already executed
+HAMA_rebuilt.ipynb   # narrative walkthrough with outputs already executed
 ```

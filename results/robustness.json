@@ -2,7 +2,7 @@
   {
     "seed": 42,
     "condition": "clean",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.531496062992126,
     "precision": 0.4041916167664671,
     "recall": 0.7758620689655172,
@@ -30,7 +30,7 @@
   {
     "seed": 42,
     "condition": "noise_0.1",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5280898876404494,
     "precision": 0.39166666666666666,
     "recall": 0.8103448275862069,
@@ -58,7 +58,7 @@
   {
     "seed": 42,
     "condition": "noise_0.3",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5188834154351396,
     "precision": 0.3632183908045977,
     "recall": 0.9080459770114943,
@@ -86,7 +86,7 @@
   {
     "seed": 42,
     "condition": "missing_0.1",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5192307692307693,
     "precision": 0.3901734104046243,
     "recall": 0.7758620689655172,
@@ -114,7 +114,7 @@
   {
     "seed": 42,
     "condition": "missing_0.3",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.512241054613936,
     "precision": 0.38095238095238093,
     "recall": 0.7816091954022989,
@@ -142,7 +142,7 @@
   {
     "seed": 42,
     "condition": "prevalence_0.05",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.125,
     "precision": 0.06756756756756757,
     "recall": 0.8333333333333334,
@@ -170,7 +170,7 @@
   {
     "seed": 42,
     "condition": "prevalence_0.15",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.3081761006289308,
     "precision": 0.19140625,
     "recall": 0.7903225806451613,
@@ -198,7 +198,7 @@
   {
     "seed": 123,
     "condition": "clean",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5454545454545454,
     "precision": 0.4864864864864865,
     "recall": 0.6206896551724138,
@@ -226,7 +226,7 @@
   {
     "seed": 123,
     "condition": "noise_0.1",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5311004784688995,
     "precision": 0.45491803278688525,
     "recall": 0.6379310344827587,
@@ -254,7 +254,7 @@
   {
     "seed": 123,
     "condition": "noise_0.3",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5283757338551859,
     "precision": 0.40059347181008903,
     "recall": 0.7758620689655172,
@@ -282,7 +282,7 @@
   {
     "seed": 123,
     "condition": "missing_0.1",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5288461538461539,
     "precision": 0.45454545454545453,
     "recall": 0.632183908045977,
@@ -310,7 +310,7 @@
   {
     "seed": 123,
     "condition": "missing_0.3",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.505800464037123,
     "precision": 0.42412451361867703,
     "recall": 0.6264367816091954,
@@ -338,7 +338,7 @@
   {
     "seed": 123,
     "condition": "prevalence_0.05",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.1793103448275862,
     "precision": 0.10236220472440945,
     "recall": 0.7222222222222222,
@@ -366,7 +366,7 @@
   {
     "seed": 123,
     "condition": "prevalence_0.15",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.3744292237442922,
     "precision": 0.2611464968152866,
     "recall": 0.6612903225806451,
@@ -394,7 +394,7 @@
   {
     "seed": 456,
     "condition": "clean",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5199306759098787,
     "precision": 0.37220843672456577,
     "recall": 0.8620689655172413,
@@ -422,7 +422,7 @@
   {
     "seed": 456,
     "condition": "noise_0.1",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.509090909090909,
     "precision": 0.35730858468677495,
     "recall": 0.8850574712643678,
@@ -450,7 +450,7 @@
   {
     "seed": 456,
     "condition": "noise_0.3",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5045317220543807,
     "precision": 0.3422131147540984,
     "recall": 0.9597701149425287,
@@ -478,7 +478,7 @@
   {
     "seed": 456,
     "condition": "missing_0.1",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5204081632653061,
     "precision": 0.3695652173913043,
     "recall": 0.8793103448275862,
@@ -506,7 +506,7 @@
   {
     "seed": 456,
     "condition": "missing_0.3",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5024793388429752,
     "precision": 0.35266821345707655,
     "recall": 0.8735632183908046,
@@ -534,7 +534,7 @@
   {
     "seed": 456,
     "condition": "prevalence_0.05",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.11564625850340136,
     "precision": 0.06159420289855073,
     "recall": 0.9444444444444444,
@@ -562,7 +562,7 @@
   {
     "seed": 456,
     "condition": "prevalence_0.15",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.2925531914893617,
     "precision": 0.1751592356687898,
     "recall": 0.8870967741935484,
@@ -590,7 +590,7 @@
   {
     "seed": 789,
     "condition": "clean",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5720720720720721,
     "precision": 0.4703703703703704,
     "recall": 0.7298850574712644,
@@ -618,7 +618,7 @@
   {
     "seed": 789,
     "condition": "noise_0.1",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5623678646934461,
     "precision": 0.44481605351170567,
     "recall": 0.764367816091954,
@@ -646,7 +646,7 @@
   {
     "seed": 789,
     "condition": "noise_0.3",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5413005272407733,
     "precision": 0.389873417721519,
     "recall": 0.8850574712643678,
@@ -674,7 +674,7 @@
   {
     "seed": 789,
     "condition": "missing_0.1",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5520169851380042,
     "precision": 0.4377104377104377,
     "recall": 0.7471264367816092,
@@ -702,7 +702,7 @@
   {
     "seed": 789,
     "condition": "missing_0.3",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5427350427350427,
     "precision": 0.43197278911564624,
     "recall": 0.7298850574712644,
@@ -730,7 +730,7 @@
   {
     "seed": 789,
     "condition": "prevalence_0.05",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.13714285714285715,
     "precision": 0.07643312101910828,
     "recall": 0.6666666666666666,
@@ -758,7 +758,7 @@
   {
     "seed": 789,
     "condition": "prevalence_0.15",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.3374485596707819,
     "precision": 0.2265193370165746,
     "recall": 0.6612903225806451,
@@ -786,7 +786,7 @@
   {
     "seed": 1024,
     "condition": "clean",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5364806866952789,
     "precision": 0.4280821917808219,
     "recall": 0.7183908045977011,
@@ -814,7 +814,7 @@
   {
     "seed": 1024,
     "condition": "noise_0.1",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5155925155925156,
     "precision": 0.40390879478827363,
     "recall": 0.7126436781609196,
@@ -842,7 +842,7 @@
   {
     "seed": 1024,
     "condition": "noise_0.3",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.48771929824561405,
     "precision": 0.351010101010101,
     "recall": 0.7988505747126436,
@@ -870,7 +870,7 @@
   {
     "seed": 1024,
     "condition": "missing_0.1",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5221052631578947,
     "precision": 0.4119601328903654,
     "recall": 0.7126436781609196,
@@ -898,7 +898,7 @@
   {
     "seed": 1024,
     "condition": "missing_0.3",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.5213849287169042,
     "precision": 0.4037854889589905,
     "recall": 0.735632183908046,
@@ -926,7 +926,7 @@
   {
     "seed": 1024,
     "condition": "prevalence_0.05",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.1319796954314721,
     "precision": 0.07262569832402235,
     "recall": 0.7222222222222222,
@@ -954,7 +954,7 @@
   {
     "seed": 1024,
     "condition": "prevalence_0.15",
-    "system": "semas",
+    "system": "hama",
     "f1": 0.3418181818181818,
     "precision": 0.22065727699530516,
     "recall": 0.7580645161290323,

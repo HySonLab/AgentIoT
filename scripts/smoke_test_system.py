@@ -1,4 +1,4 @@
-"""End-to-end SEMAS smoke test on the Boiler dataset.
+"""End-to-end HAMA smoke test on the Boiler dataset.
 
 Pipeline: K=3 fog nodes -> validation threshold -> PPO evolution ->
 aggregation -> test evaluation -> SHAP -> SLM response, with honest
@@ -14,11 +14,11 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 import numpy as np
 
-from semas.data import load_boiler
-from semas.evaluation import calibrate_threshold, classification_metrics, measure_latency
-from semas.seeding import set_seeds
-from semas.system import SemasSystem
-from semas.agents.fog_node import FogPolicy
+from hama.data import load_boiler
+from hama.evaluation import calibrate_threshold, classification_metrics, measure_latency
+from hama.seeding import set_seeds
+from hama.system import HamaSystem
+from hama.agents.fog_node import FogPolicy
 
 SEED = 42
 set_seeds(SEED)
@@ -27,9 +27,9 @@ print("1) Data")
 ds = load_boiler(seed=SEED)
 print("  ", ds.summary())
 
-print("2) Fit SEMAS (K=3 fog nodes)")
+print("2) Fit HAMA (K=3 fog nodes)")
 t0 = time.perf_counter()
-sys_ = SemasSystem(k_nodes=3, seed=SEED).fit(ds.X_train.values)
+sys_ = HamaSystem(k_nodes=3, seed=SEED).fit(ds.X_train.values)
 print(f"   fit time: {time.perf_counter()-t0:.1f}s")
 
 print("3) Tune edge filter + calibrate initial tau on VALIDATION")
@@ -50,7 +50,7 @@ print(f"   test (pre-PPO)  F1={m0['f1']:.3f} P={m0['precision']:.3f} "
       f"R={m0['recall']:.3f} AUC={m0['roc_auc']:.3f}")
 
 print("4) PPO policy evolution on validation stream")
-from semas.agents.evolution import evolve_policy
+from hama.agents.evolution import evolve_policy
 t0 = time.perf_counter()
 model, best_policy = evolve_policy(sys_, ds.X_val.values, ds.y_val,
                                    total_timesteps=512, seed=SEED, window=256)
@@ -70,7 +70,7 @@ lat = measure_latency(lambda X: sys_.predict(X, tau=best_policy.tau),
 print(f"   per-sample: {lat.per_sample_ms:.3f} ms | batch({lat.n_samples}): {lat.batch_ms:.0f} ms")
 
 print("6) SHAP attribution for top alert")
-from semas.agents.meta import AgentE
+from hama.agents.meta import AgentE
 alerts = np.flatnonzero(s_test2 >= best_policy.tau)
 agent_e = AgentE(sys_.nodes[0], ds.feature_names, ds.X_train.values)
 top_alert = alerts[np.argmax(s_test2[alerts])]
@@ -80,7 +80,7 @@ for feat, val in attribution:
     print(f"     {feat}: {val:+.3f}")
 
 print("7) SLM response (llama3.2:1b via Ollama)")
-from semas.agents.response import AgentC, model_memory_mb
+from hama.agents.response import AgentC, model_memory_mb
 agent_c = AgentC()
 rec = agent_c.generate(
     severity=float(s_test2[top_alert]),

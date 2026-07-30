@@ -23,7 +23,7 @@ from .agents.fog_node import FogPolicy
 from .baselines.systems import Baseline1Static, Baseline2RuleBased
 from .evaluation import calibrate_threshold, classification_metrics
 from .seeding import set_seeds
-from .system import SemasSystem
+from .system import HamaSystem
 
 
 def _segments(n: int, k: int):
@@ -74,8 +74,8 @@ def run_system(system_name: str, ds, seed: int, mode: str = "static",
     Xte, yte = ds.X_test.values, ds.y_test
 
     t_fit0 = time.perf_counter()
-    if system_name == "semas":
-        sys_ = SemasSystem(k_nodes=k_nodes, seed=seed,
+    if system_name == "hama":
+        sys_ = HamaSystem(k_nodes=k_nodes, seed=seed,
                            contiguous_partitions=contiguous).fit(Xtr)
         sys_.edge.tune(Xva, yva)
         s_val = sys_.scores(Xva)

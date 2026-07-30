@@ -10,7 +10,7 @@ detector choice), all three systems share the same detector stack
                             applies the manuscript's heuristic rules
                             (contamination +/-0.02 by F1 band; threshold
                             step by precision-recall imbalance).
-  * SEMAS (PPO, K=3):       semas.system.SemasSystem + PPO evolution.
+  * HAMA (PPO, K=3):       hama.system.HamaSystem + PPO evolution.
 
 Adaptation protocol (drift experiments): the evaluation stream is processed
 in sequential segments; after each segment the adaptive systems receive that
@@ -54,7 +54,7 @@ class Baseline2RuleBased(Baseline1Static):
     Note (contamination): with a fixed random_state, IsolationForest's
     score_samples ranking is provably invariant to the contamination
     parameter - it only shifts sklearn's internal .predict() cutoff, which
-    this system does not use (see semas/agents/detectors.py). The
+    this system does not use (see hama/agents/detectors.py). The
     contamination rule is retained for fidelity to the manuscript's
     described mechanism, but it has NO effect on detection scores here;
     this is stated explicitly in the manuscript rather than left to look

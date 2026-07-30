@@ -1,7 +1,7 @@
 """A fog node: B1 + B2 detectors and B3 consensus over a data partition.
 
 K nodes are instantiated over disjoint partitions of the training stream,
-which is what makes the parameter-aggregation mechanism (semas/aggregation.py)
+which is what makes the parameter-aggregation mechanism (hama/aggregation.py)
 meaningful (K>1), addressing R1-Q6 / R3-3.
 """
 

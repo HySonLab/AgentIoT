@@ -7,7 +7,7 @@ instantiates three independently seeded ensembles (extra diversity).
 Three volume-controlled configurations, 5 seeds each (Boiler static):
 
   A) K=3, partitioned    : 3 nodes, disjoint thirds of the training data
-                           (the paper's SEMAS configuration).
+                           (the paper's HAMA configuration).
   B) K=1, full data      : 1 node, all training data
                            (the original 'no_federated' arm).
   C) K=1, third data     : 1 node, a random third of the training data
@@ -32,12 +32,12 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 import numpy as np
 
-from semas.agents.fog_node import FogPolicy
-from semas.baselines.systems import Baseline1Static
-from semas.data import load_boiler
-from semas.evaluation import calibrate_threshold, classification_metrics
-from semas.seeding import set_seeds
-from semas.system import SemasSystem
+from hama.agents.fog_node import FogPolicy
+from hama.baselines.systems import Baseline1Static
+from hama.data import load_boiler
+from hama.evaluation import calibrate_threshold, classification_metrics
+from hama.seeding import set_seeds
+from hama.system import HamaSystem
 
 SEEDS = [42, 123, 456, 789, 1024]
 
@@ -50,7 +50,7 @@ def run_config(config: str, seed: int, ds) -> dict:
     Xte, yte = ds.X_test.values, ds.y_test
 
     if config == "K3_partitioned":
-        sys_ = SemasSystem(k_nodes=3, seed=seed).fit(Xtr)
+        sys_ = HamaSystem(k_nodes=3, seed=seed).fit(Xtr)
         sys_.edge.tune(Xva, yva)
         tau = calibrate_threshold(yva, sys_.scores(Xva))
         p = sys_.global_policy()

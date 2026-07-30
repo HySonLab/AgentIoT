@@ -1,11 +1,11 @@
-"""SEMAS system orchestrator: Edge filter -> K fog nodes -> consensus alerts.
+"""HAMA system orchestrator: Edge filter -> K fog nodes -> consensus alerts.
 
 Deployment model made explicit for the manuscript:
   * Each incoming sample is handled by exactly ONE fog node (round-robin
     routing here, standing in for sensor-to-nearest-node locality).
   * Nodes are trained on disjoint partitions of the training stream.
   * Policies evolve per node and are periodically unified by
-    data-proportional aggregation (semas/aggregation.py).
+    data-proportional aggregation (hama/aggregation.py).
 
 Latency boundary (quoted in the paper): scaled feature vector in ->
 binary decision out, including the edge filter and the routed fog node's
@@ -20,7 +20,7 @@ from .agents.fog_node import FogNode, FogPolicy
 from .aggregation import aggregate_policies, broadcast_policy
 
 
-class SemasSystem:
+class HamaSystem:
     def __init__(self, k_nodes: int = 3, seed: int = 42, z_cut: float = 2.0,
                  contiguous_partitions: bool = False):
         self.k = k_nodes

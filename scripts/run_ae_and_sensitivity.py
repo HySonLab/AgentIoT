@@ -26,11 +26,11 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
 
-from semas.baselines.deep import make_windows
-from semas.data import load_boiler, load_wind
-from semas.evaluation import calibrate_threshold, classification_metrics
-from semas.seeding import set_seeds
-from semas.agents.fog_node import FogNode
+from hama.baselines.deep import make_windows
+from hama.data import load_boiler, load_wind
+from hama.evaluation import calibrate_threshold, classification_metrics
+from hama.seeding import set_seeds
+from hama.agents.fog_node import FogNode
 
 results = {}
 
