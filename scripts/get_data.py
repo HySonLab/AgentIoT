@@ -1,23 +1,31 @@
 # -*- coding: utf-8 -*-
-"""Fetch the datasets needed to reproduce the manuscript's numbers.
+"""Fetch and verify the datasets needed to reproduce the manuscript's numbers.
 
-Only NASA C-MAPSS can be downloaded automatically: it is public, freely
-redistributable, and needs no account. It is also the dataset behind the
-paper's only externally-comparable result (the RUL benchmark), so this
-script alone is enough to reproduce Tier 1 of the README.
+Three datasets, three different situations:
 
-The other two datasets are NOT redistributed in this repository, and are
-not auto-downloadable:
+  * Boiler Emulator - BUNDLED in this repository (dataset/). It is open access
+    under CC BY (IEEE DataPort, doi:10.21227/awav-bn36), so we may redistribute
+    it with attribution; see dataset/BOILER_DATASET_LICENSE.md. Nothing to do.
 
-  * Wind Turbine SCADA - third-party dataset requiring an account to
-    download; see the URL printed below.
-  * Boiler Emulator - obtain from the authors (see README); we do not
-    redistribute it here.
+  * NASA C-MAPSS - downloaded automatically. Public, freely redistributable,
+    no account needed. This is the dataset behind the paper's only externally
+    comparable result (the RUL benchmark), so this script alone is enough to
+    reproduce Tier 1 of the README.
+
+  * Wind Turbine SCADA - NOT redistributed. Third-party dataset whose licence
+    terms we could not establish, and which requires a Kaggle account to
+    download. The URL is printed below.
+
+Every file this script knows about has a recorded SHA-256 in
+dataset/CHECKSUMS.sha256, so you can prove your inputs are byte-identical to
+the ones behind the published numbers rather than merely assuming it.
 
 Usage:
-    python scripts/get_data.py            # download C-MAPSS
+    python scripts/get_data.py            # download what can be downloaded
     python scripts/get_data.py --check    # report status only, download nothing
+    python scripts/get_data.py --verify   # check SHA-256 of everything present
 """
+import hashlib
 import sys
 import urllib.request
 import zipfile
@@ -34,13 +42,72 @@ DATA = ROOT / "dataset"
 CMAPSS_URL = ("https://phm-datasets.s3.amazonaws.com/NASA/"
               "6.+Turbofan+Engine+Degradation+Simulation+Data+Set.zip")
 
-WIND_URL = "https://www.kaggle.com/datasets/inIT-OWL/wind-turbine-scada-dataset"
+# NOTE: an earlier revision of this script pointed at
+# kaggle.com/datasets/inIT-OWL/wind-turbine-scada-dataset, which is dead (404).
+# The live source matching the file layout used here is:
+WIND_URL = "https://www.kaggle.com/datasets/wasuratme96/iiot-data-of-wind-turbine"
+
+BOILER_DOI = "https://dx.doi.org/10.21227/awav-bn36"
 
 TARGETS = {
+    "Boiler Emulator": DATA / "Boiler_emulator_dataset.csv",
     "C-MAPSS FD001": DATA / "cmapss" / "train_FD001.txt",
     "Wind SCADA": DATA / "iiot-data-of-wind-turbine" / "scada_data.csv",
-    "Boiler Emulator": DATA / "Boiler_emulator_dataset.csv",
 }
+
+
+def load_checksums():
+    """Parse dataset/CHECKSUMS.sha256 -> {relative_path: sha256}."""
+    manifest = DATA / "CHECKSUMS.sha256"
+    if not manifest.exists():
+        return {}
+    out = {}
+    for line in manifest.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        digest, _, rel = line.partition("  ")
+        if digest and rel:
+            out[rel.strip()] = digest.strip()
+    return out
+
+
+def sha256(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def verify():
+    """Check every manifest entry that is present on disk."""
+    expected = load_checksums()
+    if not expected:
+        print("No dataset/CHECKSUMS.sha256 found; cannot verify.")
+        return False
+    print("Verifying SHA-256 against dataset/CHECKSUMS.sha256:")
+    ok = missing = bad = 0
+    for rel, want in expected.items():
+        path = DATA / rel
+        if not path.exists():
+            print(f"  [ -- ] {rel}  (not present)")
+            missing += 1
+            continue
+        got = sha256(path)
+        if got == want:
+            print(f"  [ OK ] {rel}")
+            ok += 1
+        else:
+            print(f"  [FAIL] {rel}")
+            print(f"         expected {want}")
+            print(f"         got      {got}")
+            bad += 1
+    print(f"\n  {ok} verified, {bad} mismatched, {missing} not present.")
+    if bad:
+        print("  A mismatch means your copy differs from the one behind the")
+        print("  published numbers - results will not reproduce exactly.")
+    return bad == 0
 
 
 def status():
@@ -99,16 +166,24 @@ def instructions(missing):
     if "Wind SCADA" in missing:
         print("\nWind Turbine SCADA (manual download required):")
         print(f"  {WIND_URL}")
+        print("  We do not redistribute this one: it needs a Kaggle account and")
+        print("  we could not establish its redistribution terms.")
         print("  Place scada_data.csv, fault_data.csv and status_data.csv in:")
         print(f"  {(DATA / 'iiot-data-of-wind-turbine').relative_to(ROOT)}/")
+        print("  Then run:  python scripts/get_data.py --verify")
     if "Boiler Emulator" in missing:
-        print("\nBoiler Emulator (not redistributed here):")
-        print("  Request from the corresponding author - see README, "
-              "'Getting the data'.")
-        print(f"  Place Boiler_emulator_dataset.csv in {DATA.relative_to(ROOT)}/")
+        print("\nBoiler Emulator is normally bundled with this repository but is")
+        print("missing from your checkout. Re-clone, or download it from")
+        print(f"  {BOILER_DOI}")
+        print(f"  and place Boiler_emulator_dataset.csv in {DATA.relative_to(ROOT)}/")
+        print("  Cite: R. Shohet, M. Kandil, J. J. McArthur, 'Simulated boiler")
+        print("  data for fault detection and classification', IEEE Dataport, 2019.")
 
 
 if __name__ == "__main__":
+    if "--verify" in sys.argv:
+        sys.exit(0 if verify() else 1)
+
     check_only = "--check" in sys.argv
     missing = status()
     if not check_only and "C-MAPSS FD001" in missing:
@@ -119,3 +194,5 @@ if __name__ == "__main__":
     instructions(missing)
     print("\nNo datasets are required to run scripts/verify_install.py,")
     print("which exercises the full pipeline on synthetic data.")
+    print("Run 'python scripts/get_data.py --verify' to confirm the files you")
+    print("have are byte-identical to the ones behind the published numbers.")

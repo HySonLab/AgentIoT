@@ -1,8 +1,16 @@
-# Datasets are NOT redistributed in this repository.
-# See README "Getting the data" and scripts/get_data.py.
+# Most datasets are NOT redistributed here (third-party terms); see README
+# "Getting the data" and scripts/get_data.py.
+#
+# Exception: the Boiler Emulator dataset IS bundled. It is open access under
+# CC BY (IEEE DataPort, doi:10.21227/awav-bn36) and is only 1.3 MB, so
+# shipping it makes the Boiler results reproducible with no account or
+# manual download. Attribution: dataset/BOILER_DATASET_LICENSE.md
 dataset/*
 !dataset/.gitkeep
 !dataset/README.md
+!dataset/BOILER_DATASET_LICENSE.md
+!dataset/CHECKSUMS.sha256
+!dataset/Boiler_emulator_dataset.csv
 
 # Python
 __pycache__/

@@ -1,0 +1,15 @@
+# NOTE: in .gitattributes the LAST matching pattern wins, so the general rule
+# must come first and the specific overrides after it.
+
+# Default: let git normalise text in the repository as usual.
+* text=auto
+
+# Dataset files must round-trip byte-for-byte on every platform.
+#
+# The Boiler CSV as distributed by IEEE DataPort uses CRLF line endings, and
+# dataset/CHECKSUMS.sha256 records the SHA-256 of exactly those bytes. Under
+# git's default text handling (core.autocrlf), the blob would be normalised to
+# LF on commit and restored to CRLF only on Windows checkouts - so a reviewer
+# on Linux or macOS would get different bytes and a spurious checksum failure.
+# Marking these paths binary (-text) disables all end-of-line conversion.
+dataset/** -text

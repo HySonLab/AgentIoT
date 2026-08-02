@@ -37,10 +37,23 @@ datasets — see below.
 | Tier | Needs | Time | Reproduces |
 |---|---|---|---|
 | **0** | nothing | 3–4 min | Pipeline runs end to end (`verify_install.py`) |
-| **1** | C-MAPSS (auto-download) | ~20 min | RUL benchmark: MAE 11.20 / RMSE 15.95 |
-| **2** | all three datasets | several hours | Every table in the paper |
+| **1** | nothing (Boiler is bundled) | ~15 min | Boiler detection results, e.g. F1 0.531 / ROC-AUC 0.647 |
+| **2** | C-MAPSS (auto-download) | ~20 min | RUL benchmark: MAE 11.20 / RMSE 15.95 |
+| **3** | + Wind SCADA (manual, Kaggle) | several hours | Every table in the paper |
 
-### Tier 1 — the externally comparable result
+Tiers 0–2 need **no account and no manual download**. Only the Wind SCADA
+tables require fetching a dataset by hand.
+
+### Tier 1 — the bundled dataset
+
+The Boiler Emulator data ships with this repository, so this runs on a fresh
+clone with nothing else fetched:
+
+```bash
+python scripts/run_experiments.py --datasets boiler_static boiler_drift --seeds 5
+```
+
+### Tier 2 — the externally comparable result
 
 C-MAPSS is public and downloads automatically. This is the paper's only
 result directly comparable to published literature, so it is the most
@@ -78,13 +91,31 @@ Run `python scripts/get_data.py --check` at any time for status.
 
 | Dataset | How to obtain | Redistributed here? |
 |---|---|---|
+| **Boiler Emulator** | Already in `dataset/` — nothing to do | **Yes** — open access under CC BY |
 | **NASA C-MAPSS** | `python scripts/get_data.py` (automatic) | No — downloaded from NASA |
 | **Wind Turbine SCADA** | Kaggle; URL printed by `get_data.py` | No — third-party terms |
-| **Boiler Emulator** | Request from the corresponding author | No |
 
-We deliberately do not redistribute datasets we do not own. Every loader
-fails with an explicit message telling you where the file should go and how
-to get it, rather than a bare `FileNotFoundError`.
+The Boiler Emulator dataset is bundled because it is open access under CC BY
+(IEEE DataPort, [doi:10.21227/awav-bn36](https://dx.doi.org/10.21227/awav-bn36))
+and only 1.3 MB, so the Boiler results reproduce with no account and no
+download. **Attribution is a licence condition** — if you use it, cite
+Shohet, Kandil & McArthur (2019); see
+[`dataset/BOILER_DATASET_LICENSE.md`](dataset/BOILER_DATASET_LICENSE.md).
+
+Beyond that we do not redistribute datasets we do not own. Every loader fails
+with an explicit message telling you where the file should go and how to get
+it, rather than a bare `FileNotFoundError`.
+
+### Verifying your inputs
+
+```bash
+python scripts/get_data.py --verify
+```
+
+`dataset/CHECKSUMS.sha256` records the SHA-256 of every file behind the
+published numbers, so you can confirm your copies are byte-identical instead
+of assuming it. A mismatch means the numbers will not reproduce exactly —
+better to find that out before a multi-hour run than after.
 
 ---
 
