@@ -101,8 +101,10 @@ def load_boiler(
     drift_severity_quantile: float = 0.5,
 ) -> DatasetSplit:
     _require(csv_path, "Boiler Emulator",
-             "Not redistributed in this repository; request from the "
-             "corresponding author (see README).")
+             "This dataset ships with the repository, so it is normally "
+             "already present - re-clone, or download it from "
+             "https://dx.doi.org/10.21227/awav-bn36 (IEEE DataPort, CC BY) "
+             "and place Boiler_emulator_dataset.csv in dataset/.")
     df = pd.read_csv(csv_path)
     parsed = df["Condition"].map(_parse_condition)
     df["mechanism"] = parsed.map(lambda t: t[0])
