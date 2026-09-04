@@ -1,8 +1,6 @@
-# HAMA — Hierarchical Adaptive Multi-Agent Architecture for IIoT Predictive Maintenance
+# HAMA: Hierarchical Adaptive Multi-Agent Architecture for IIoT Predictive Maintenance
 
-Reference implementation for *"HAMA: A Hierarchical Adaptive Multi-Agent Architecture for Industrial
-IoT Predictive Maintenance"*
-(IEEE Access, manuscript **Access-2026-28815**, under review).
+Accepted for publication at IEEE Access journal: https://ieeexplore.ieee.org/document/11678972
 
 Every number in the manuscript is produced by the scripts here and written to
 `results/` as machine-readable artifacts. Nothing in the paper's results
